@@ -2,6 +2,7 @@ package com.example.workmanager
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,27 +13,48 @@ import androidx.work.*
 import java.util.concurrent.TimeUnit
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
+    lateinit var reciever:AirplaneModeChangedReciever
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val start = findViewById<Button>(R.id.start)
-        val stop = findViewById<Button>(R.id.stop)
-        val info = findViewById<TextView>(R.id.info)
+        reciever = AirplaneModeChangedReciever()
+
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
+            registerReceiver(AirplaneModeChangedReciever(), it)
+        }
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(reciever)
+    }
+
+        //Intent Service
+
+//        val start = findViewById<Button>(R.id.start)
+//        val stop = findViewById<Button>(R.id.stop)
+//        val info = findViewById<TextView>(R.id.info)
+//
+//
+//        start.setOnClickListener{
+//            Intent(this,MyIntentService::class.java).also {
+//                startService(it)
+//                info.text = "Service Running"
+//            }
+//        }
+//        stop.setOnClickListener{
+//            MyIntentService.stopService()
+//            info.text = "Service Stopped"
+//        }
 
 
-        start.setOnClickListener{
-            Intent(this,MyIntentService::class.java).also {
-                startService(it)
-                info.text = "Service Running"
-            }
-        }
-        stop.setOnClickListener{
-            MyIntentService.stopService()
-            info.text = "Service Stopped"
-        }
+        //WorkManager
 
 //        val data = Data.Builder().putString("DATA","INIT").build()
-//        //creating multiple workRequests
+//
+        //creating multiple workRequests
+
 //        val yourWorkRequest1 = OneTimeWorkRequest.Builder(MainActivityWorkerClass::class.java).build()
 //        val yourWorkRequest2 = OneTimeWorkRequest.Builder(MainActivityWorkerClass::class.java).build()
 //        val yourWorkRequest3 = OneTimeWorkRequest.Builder(MainActivityWorkerClass::class.java).build()
@@ -47,6 +69,7 @@ class MainActivity : AppCompatActivity() {
 //                WorkManager.getInstance(this).enqueue(yourWorkRequest)
 
         //PeriodicWorkRequest
+
 //        val yourWorkRequest = PeriodicWorkRequest.Builder(MainActivityWorkerClass::class.java,20,TimeUnit.MINUTES)
 //        WorkManager.getInstance(this).enqueueUniquePeriodicWork(TAG,ExistingPeriodicWorkPolicy.KEEP,yourWorkRequest.build())
 
@@ -55,5 +78,5 @@ class MainActivity : AppCompatActivity() {
 //                Log.v(TAG,"success")
 //            }
 //            })
-    }
+
 }
